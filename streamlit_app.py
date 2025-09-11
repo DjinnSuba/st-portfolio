@@ -22,7 +22,7 @@ if selection == "Home":
 
     # Resume download button
     try:
-        with open("resume.pdf", "rb") as pdf_file:
+        with open("CV-Suba, OdeDjinnCaezar.pdf", "rb") as pdf_file:
             st.download_button(
                 label="📄 Download My Resume",
                 data=pdf_file,
