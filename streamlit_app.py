@@ -2,17 +2,18 @@ import streamlit as st
 import requests
 from PIL import Image
 import base64
-import fitz  # PyMuPDF <-- missing import
+import fitz  # PyMuPDF
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="My Portfolio", layout="wide")
 
 # --- Helper function for PDFs ---
-def display_pdf(file):
-    """Display PDF in Streamlit with iframe (local files only)."""
-    with open(file, "rb") as f:
-        base64_pdf = base64.b64encode(f.read()).decode("utf-8")
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600"></iframe>'
+def display_pdf_from_url(url: str, height: int = 600):
+    """Embed a remote PDF in Streamlit via iframe without auto-download."""
+    pdf_display = f"""
+        <iframe src="https://docs.google.com/gview?url={url}&embedded=true" 
+                width="100%" height="{height}" style="border: none;"></iframe>
+    """
     st.markdown(pdf_display, unsafe_allow_html=True)
 
 # --- SIDEBAR NAVIGATION ---
@@ -64,20 +65,19 @@ if selection == "Home":
     for name, url in certificates.items():
         st.subheader(f"📖 {name}")
         try:
+            # Thumbnail (Page 1 preview)
             response = requests.get(url)
             pdf_bytes = response.content
-
             doc = fitz.open(stream=pdf_bytes, filetype="pdf")
             page = doc[0]
-            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))  # zoom 2x
-            st.image(pix.tobytes("png"), caption=f"{name} (Page 1 Preview)", use_container_width=True)
+            pix = page.get_pixmap(matrix=fitz.Matrix(1.5, 1.5))  # 1.5x zoom
+            st.image(pix.tobytes("png"), caption=f"{name} (Preview)", use_container_width=True)
 
-            with st.expander("View full certificate"):
-                for i in range(len(doc)):
-                    page = doc[i]
-                    pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
-                    st.image(pix.tobytes("png"), caption=f"{name} - Page {i+1}")
+            # Inline PDF viewer
+            with st.expander("📂 View Full Certificate"):
+                display_pdf_from_url(url, height=700)
 
+            # Direct link
             st.markdown(f"[🔗 Open {name} in New Tab]({url})")
 
         except Exception as e:
