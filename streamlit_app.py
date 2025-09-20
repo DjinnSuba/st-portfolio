@@ -1,22 +1,89 @@
 import streamlit as st
 import requests
 from PIL import Image
-import base64
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="My Portfolio", layout="wide")
 
+# --- GLOBAL CSS STYLE ---
+st.markdown("""
+    <style>
+    body {
+        background-color: #0e1117;
+        color: #fafafa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .main {
+        padding: 20px;
+    }
+    /* Titles */
+    h1, h2, h3 {
+        color: #fca311 !important;
+    }
+    /* Card styling */
+    .card {
+        background: #1c1e24;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+        transition: transform 0.2s ease-in-out;
+    }
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.35);
+    }
+    /* Links */
+    a {
+        color: #00c4ff !important;
+        text-decoration: none;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+    /* Contact form */
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 20px;
+    }
+    input, textarea {
+        padding: 10px;
+        font-size: 1rem;
+        border: 1px solid #333;
+        border-radius: 6px;
+        background: #1c1e24;
+        color: #fafafa;
+    }
+    button {
+        padding: 10px;
+        background-color: #fca311;
+        color: black;
+        border: none;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: 0.3s;
+    }
+    button:hover {
+        background-color: #ffb933;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # --- Helper function for PDFs ---
-def display_pdf_from_url(url: str, height: int = 600):
+def display_pdf_from_url(url: str, height: int = 400):
     """Embed a remote PDF in Streamlit via iframe without auto-download."""
     pdf_display = f"""
         <iframe src="https://docs.google.com/gview?url={url}&embedded=true" 
-                width="100%" height="{height}" style="border: none;"></iframe>
+                width="100%" height="{height}" style="border: none; border-radius:8px;"></iframe>
     """
     st.markdown(pdf_display, unsafe_allow_html=True)
 
 # --- SIDEBAR NAVIGATION ---
-st.sidebar.title("Navigation")
+st.sidebar.title("📌 Navigation")
 selection = st.sidebar.radio("Go to", ["Home", "Projects", "Contact"])
 
 # --- HOME PAGE ---
@@ -26,7 +93,7 @@ if selection == "Home":
 
     # Profile image
     try:
-        profile_pic = Image.open("profile.jpg")  
+        profile_pic = Image.open("profile.jpg")
         st.image(profile_pic, caption="This is me!", width=200)
     except FileNotFoundError:
         st.warning("Profile picture not found. Please place 'profile.jpg' in the app folder.")
@@ -44,41 +111,41 @@ if selection == "Home":
         st.warning("Resume file not found. Please place 'CV-Suba, OdeDjinnCaezar.pdf' in the app folder.")
 
     # About Me Section
-    st.header("About Me")
+    st.header("💡 About Me")
     st.markdown("""
         I'm a **Data Analyst x AI Developer** with a passion for creating impactful real-world solutions.
     """)
 
-    
-
     # --- Certifications Section ---
     st.header("📜 Certifications & Badges")
 
-    # Example 1: Display badges in a row
-    col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
+    # Badges row
+    st.subheader("🏅 Badges")
+    col1, col2, col3 = st.columns(3)
 
     with col1:
         try:
             badge1 = Image.open("DS Associate - badge with outline.png")
-            st.image(badge1, caption="Data Science Associate Certification", use_container_width=True)
+            st.image(badge1, caption="Data Science Associate", use_container_width=True)
         except FileNotFoundError:
-            st.warning("Missing: DS Associate - badge with outline.png")
+            st.warning("Missing: DS Associate badge")
 
     with col2:
         try:
             badge2 = Image.open("cert_streamlit.png")
-            st.image(badge2, caption="Streamlit Creator Badge", use_container_width=True)
+            st.image(badge2, caption="Streamlit Creator", use_container_width=True)
         except FileNotFoundError:
-            st.warning("Missing: cert_streamlit.png")
+            st.warning("Missing: Streamlit badge")
 
     with col3:
         try:
             badge3 = Image.open("cert_aws.png")
             st.image(badge3, caption="AWS Cloud Practitioner", use_container_width=True)
         except FileNotFoundError:
-            st.warning("Missing: cert_aws.png")
+            st.warning("Missing: AWS badge")
 
-    
+    # Certificates grid
+    st.subheader("📖 Certificates")
     certificates = {
         "AI Agent Fundamentals": "https://github.com/DjinnSuba/st-portfolio/raw/main/AI_Agent_Fundamentals-certificate.pdf",
         "Building AI Agents with Google ADK": "https://github.com/DjinnSuba/st-portfolio/raw/main/Building_AI_Agents_with_Google_ADK-certificate.pdf",
@@ -87,20 +154,19 @@ if selection == "Home":
         "Intermediate SQL": "https://github.com/DjinnSuba/st-portfolio/raw/main/Intermediate_SQL-certificate.pdf",
         "Introduction to PowerBI": "https://github.com/DjinnSuba/st-portfolio/raw/main/Introduction_PowerBI-certificate.pdf",
     }
-    
+
     cols = st.columns(3)
     for idx, (name, url) in enumerate(certificates.items()):
         with cols[idx % 3]:
-            with st.container(border=True):
-                st.markdown(f"**📖 {name}**")
-                with st.expander("📂 View Full Certificate", expanded=False):
-                    display_pdf_from_url(url, height=350)
-                st.markdown(f"[🔗 Open in New Tab]({url})")
+            st.markdown(f"<div class='card'><b>{name}</b>", unsafe_allow_html=True)
+            with st.expander("📂 View Full Certificate", expanded=False):
+                display_pdf_from_url(url, height=300)
+            st.markdown(f"[🔗 Open in New Tab]({url})", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
 
 # --- PROJECTS PAGE ---
 elif selection == "Projects":
     st.title("💼 Projects")
-    st.write("Here are some of my featured projects:")
 
     projects = [
         {
@@ -123,14 +189,17 @@ elif selection == "Projects":
         },
     ]
 
-    for project in projects:
-        st.subheader(project["title"])
-        st.markdown(f"""
-        - **Description**: {project["desc"]}
-        - **Tech Stack**: {project["stack"]}
-        - **Repo**: [View on GitHub]({project["repo"]})
-        """)
-        st.markdown("---")
+    cols = st.columns(3)
+    for idx, project in enumerate(projects):
+        with cols[idx % 3]:
+            st.markdown(f"""
+                <div class="card">
+                    <h4>{project["title"]}</h4>
+                    <p><b>Description:</b> {project["desc"]}</p>
+                    <p><b>Tech Stack:</b> {project["stack"]}</p>
+                    <a href="{project["repo"]}" target="_blank">🔗 View on GitHub</a>
+                </div>
+            """, unsafe_allow_html=True)
 
 # --- CONTACT PAGE ---
 elif selection == "Contact":
@@ -146,33 +215,4 @@ elif selection == "Contact":
         <button type="submit">Send</button>
     </form>
     """
-
     st.markdown(contact_form, unsafe_allow_html=True)
-
-    st.markdown("""
-        <style>
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        input, textarea {
-            padding: 10px;
-            font-size: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-        }
-        button {
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 6px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        </style>
-    """, unsafe_allow_html=True)
