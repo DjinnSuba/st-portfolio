@@ -109,29 +109,35 @@ if selection == "Home":
 
     # Certificate PDFs from GitHub
     certificates = {
-        "AI Agent Fundamentals": "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/AI_Agent_Fundamentals-certificate.pdf",
-        "Building AI Agents with Google ADK": "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Building_AI_Agents_with_Google_ADK-certificate.pdf",
-        "Associate Data Scientist": "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/DataScienceAssociate-certificate.pdf",
-        "Intermediate Python": "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Intermediate_Python-certificate.pdf",
-        "Intermediate SQL": "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Intermediate_SQL-certificate.pdf",
-        "Introduction to PowerBI": "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Introduction_PowerBI-certificate.pdf",
+        "AI Agent Fundamentals": "https://github.com/DjinnSuba/st-portfolio/raw/main/AI_Agent_Fundamentals-certificate.pdf",
+        "Building AI Agents with Google ADK": "https://github.com/DjinnSuba/st-portfolio/raw/main/Building_AI_Agents_with_Google_ADK-certificate.pdf",
+        "Associate Data Scientist": "https://github.com/DjinnSuba/st-portfolio/raw/main/DataScienceAssociate-certificate.pdf",
+        "Intermediate Python": "https://github.com/DjinnSuba/st-portfolio/raw/main/Intermediate_Python-certificate.pdf",
+        "Intermediate SQL": "https://github.com/DjinnSuba/st-portfolio/raw/main/Intermediate_SQL-certificate.pdf",
+        "Introduction to PowerBI": "https://github.com/DjinnSuba/st-portfolio/raw/main/Introduction_PowerBI-certificate.pdf",
     }
     
     for name, url in certificates.items():
-        with st.expander(f"📖 {name}", expanded=False):
-            st.markdown(f"[🔗 Open in Browser]({url})")
-            st.markdown(f"""<iframe src="{url}" width="100%" height="500"></iframe>""", unsafe_allow_html=True)
-
-            pdf_data = fetch_pdf(url)
-            if pdf_data:
-                st.download_button(
-                    label=f"📥 Download {name}",
-                    data=pdf_data,
-                    file_name=f"{name.replace(' ', '_')}.pdf",
-                    mime="application/pdf"
-                )
-            else:
-                st.warning(f"Could not load {name}.")
+        st.subheader(f"📖 {name}")
+    
+        # Inline preview
+        st.components.v1.iframe(url, height=500, scrolling=True)
+    
+        # Just provide link (no auto-download)
+        st.markdown(f"[🔗 View {name} in New Tab]({url})")
+    
+        # Optional: download button, but fetch only when clicked
+        if st.button(f"📥 Download {name}"):
+            import requests
+            pdf_data = requests.get(url).content
+            st.download_button(
+                label=f"Confirm Download {name}",
+                data=pdf_data,
+                file_name=f"{name.replace(' ', '_')}.pdf",
+                mime="application/pdf"
+            )
+    
+        st.markdown("---")
 
 # --- PROJECTS PAGE ---
 elif selection == "Projects":
