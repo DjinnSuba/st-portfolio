@@ -11,7 +11,7 @@ def display_pdf(file):
     """Display PDF in Streamlit with iframe (local files only)."""
     with open(file, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode("utf-8")
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600" type="application/pdf"></iframe>'
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600"></iframe>'
     st.markdown(pdf_display, unsafe_allow_html=True)
 
 # --- Cache PDF fetch from URLs ---
@@ -25,6 +25,25 @@ def fetch_pdf(url):
 # --- SIDEBAR NAVIGATION ---
 st.sidebar.title("Navigation")
 selection = st.sidebar.radio("Go to", ["Home", "Projects", "Contact"])
+
+# --- GLOBAL STYLING ---
+st.markdown("""
+    <style>
+    body {
+        background-color: #f9f9f9;
+        font-family: "Segoe UI", sans-serif;
+    }
+    .stButton button {
+        border-radius: 8px;
+        padding: 0.6rem 1.2rem;
+        font-size: 1rem;
+    }
+    iframe {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # --- HOME PAGE ---
 if selection == "Home":
@@ -57,45 +76,38 @@ if selection == "Home":
         
         - 🌱 I’m currently working on...
         - 💼 I’ve worked with: **MSCI Inc, UPM IMS-DIG, Remotasks**
-        - 📫 How to reach me: [othedjinn@gmail.com](mailto:othedjinn@gmail.com) | 
+        - 📫 Reach me at: [othedjinn@gmail.com](mailto:othedjinn@gmail.com) | 
           [LinkedIn](https://www.linkedin.com/in/caezar-suba-634453161/)
     """)
 
     # --- Certifications Section ---
     st.header("📜 Certifications & Badges")
 
-    # Example 1: Display badges in a row
+    # Badge row
     col1, col2, col3 = st.columns(3)
+    for col, (file, caption) in zip(
+        [col1, col2, col3],
+        [
+            ("DS Associate - badge with outline.png", "Data Science Associate Certification"),
+            ("cert_streamlit.png", "Streamlit Creator Badge"),
+            ("cert_aws.png", "AWS Cloud Practitioner"),
+        ],
+    ):
+        with col:
+            try:
+                img = Image.open(file)
+                st.image(img, caption=caption, use_container_width=True)
+            except FileNotFoundError:
+                st.warning(f"Missing: {file}")
 
-    with col1:
-        try:
-            badge1 = Image.open("DS Associate - badge with outline.png")
-            st.image(badge1, caption="Data Science Associate Certification", use_container_width=True)
-        except FileNotFoundError:
-            st.warning("Missing: DS Associate - badge with outline.png")
-
-    with col2:
-        try:
-            badge2 = Image.open("cert_streamlit.png")
-            st.image(badge2, caption="Streamlit Creator Badge", use_container_width=True)
-        except FileNotFoundError:
-            st.warning("Missing: cert_streamlit.png")
-
-    with col3:
-        try:
-            badge3 = Image.open("cert_aws.png")
-            st.image(badge3, caption="AWS Cloud Practitioner", use_container_width=True)
-        except FileNotFoundError:
-            st.warning("Missing: cert_aws.png")
-
-    # Example 2: Simple list with links
+    # Example list with links
     st.markdown("""
     - 🏆 [Google Data Analytics Certificate](https://www.credly.com/)
     - ☁️ [AWS Cloud Practitioner](https://www.credly.com/)
     - 📊 [Tableau Desktop Specialist](https://www.credly.com/)
     """)
 
-    # Map: certificate name -> GitHub raw link
+    # Certificate PDFs from GitHub
     certificates = {
         "AI Agent Fundamentals": "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/AI_Agent_Fundamentals-certificate.pdf",
         "Building AI Agents with Google ADK": "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Building_AI_Agents_with_Google_ADK-certificate.pdf",
@@ -106,95 +118,41 @@ if selection == "Home":
     }
     
     for name, url in certificates.items():
-        st.subheader(f"📖 {name}")
-        
-        # Open in browser
-        st.markdown(f"[🔗 View Certificate]({url})")
+        with st.expander(f"📖 {name}", expanded=False):
+            st.markdown(f"[🔗 Open in Browser]({url})")
+            st.markdown(f"""<iframe src="{url}" width="100%" height="500"></iframe>""", unsafe_allow_html=True)
 
-        # Inline embed (browser permitting)
-        st.markdown(f"""
-        <iframe src="{url}" width="100%" height="500"></iframe>
-        """, unsafe_allow_html=True)
-        
-        # Download button
-        pdf_data = fetch_pdf(url)
-        if pdf_data:
-            st.download_button(
-                label=f"📄 Download {name}",
-                data=pdf_data,
-                file_name=f"{name.replace(' ', '_')}.pdf",
-                mime="application/pdf"
-            )
-        else:
-            st.warning(f"Could not load {name}.")
-        
-        st.markdown("---")
+            pdf_data = fetch_pdf(url)
+            if pdf_data:
+                st.download_button(
+                    label=f"📥 Download {name}",
+                    data=pdf_data,
+                    file_name=f"{name.replace(' ', '_')}.pdf",
+                    mime="application/pdf"
+                )
+            else:
+                st.warning(f"Could not load {name}.")
 
 # --- PROJECTS PAGE ---
 elif selection == "Projects":
     st.title("💼 Projects")
     st.write("Here are some of my featured projects:")
 
-    st.subheader("📌 Electronic Blockchain-Based Bidding App")
-    st.markdown("""
-    - **Description**: A decentralized application for secure and transparent university bidding processes.
-    - **Tech Stack**: Python, Streamlit, Hyperledger Fabric, IPFS.
-    - **Repo**: [View on GitHub](https://github.com/DjinnSuba/blockchain-bidding-app)
-    """)
-
-    st.subheader("📌 Hospital Readmission Dashboard")
-    st.markdown("""
-    - **Description**: Django + PostgreSQL dashboard with role-based access (admin, clinician, analyst).
-    - **Tech Stack**: Django, PostgreSQL, Streamlit (for analytics).
-    - **Repo**: [View on GitHub](https://github.com/DjinnSuba/hospital-dashboard)
-    """)
-
-    st.subheader("📌 Secure NLP Project")
-    st.markdown("""
-    - **Description**: A research project on privacy-preserving natural language processing using federated learning.
-    - **Tech Stack**: Python, PyTorch, Transformers.
-    - **Repo**: [View on GitHub](https://github.com/DjinnSuba/secure-nlp)
-    """)
-
-# --- CONTACT PAGE ---
-elif selection == "Contact":
-    st.title("📫 Contact Me")
-    st.write("I'd love to connect!")
-
-    contact_form = """
-    <form action="https://formsubmit.co/othedjinn@gmail.com" method="POST">
-        <input type="text" name="name" placeholder="Your name" required>
-        <input type="email" name="email" placeholder="Your email" required>
-        <textarea name="message" placeholder="Your message here..." required></textarea>
-        <button type="submit">Send</button>
-    </form>
-    """
-
-    st.markdown(contact_form, unsafe_allow_html=True)
-
-    # Optional form styling
-    st.markdown("""
-        <style>
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        input, textarea {
-            margin-bottom: 10px;
-            padding: 10px;
-            font-size: 1rem;
-            width: 100%;
-        }
-        button {
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+    projects = [
+        {
+            "title": "📌 Electronic Blockchain-Based Bidding App",
+            "desc": "A decentralized application for secure and transparent university bidding processes.",
+            "stack": "Python, Streamlit, Hyperledger Fabric, IPFS",
+            "repo": "https://github.com/DjinnSuba/blockchain-bidding-app",
+        },
+        {
+            "title": "📌 Hospital Readmission Dashboard",
+            "desc": "Django + PostgreSQL dashboard with role-based access (admin, clinician, analyst).",
+            "stack": "Django, PostgreSQL, Streamlit (for analytics)",
+            "repo": "https://github.com/DjinnSuba/hospital-dashboard",
+        },
+        {
+            "title": "📌 Secure NLP Project",
+            "desc": "A research project on privacy-preserving natural language processing using federated learning.",
+            "stack": "Python, PyTorch, Transformers",
+            "repo": "https://github.com/DjinnSuba/se
