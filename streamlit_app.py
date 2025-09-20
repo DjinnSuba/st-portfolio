@@ -60,18 +60,15 @@ if selection == "Home":
         "Intermediate SQL": "https://github.com/DjinnSuba/st-portfolio/raw/main/Intermediate_SQL-certificate.pdf",
         "Introduction to PowerBI": "https://github.com/DjinnSuba/st-portfolio/raw/main/Introduction_PowerBI-certificate.pdf",
     }
-
-    for name, url in certificates.items():
-        st.subheader(f"📖 {name}")
-
-        # Inline PDF viewer (no auto-download)
-        with st.expander("📂 View Full Certificate"):
-            display_pdf_from_url(url, height=700)
-
-        # Direct link
-        st.markdown(f"[🔗 Open {name} in New Tab]({url})")
-
-        st.markdown("---")
+    
+    # Put certificates into rows of 3 columns
+    cols = st.columns(3)
+    for idx, (name, url) in enumerate(certificates.items()):
+        with cols[idx % 3]:
+            st.subheader(f"📖 {name}")
+            with st.expander("📂 View Full Certificate"):
+                display_pdf_from_url(url, height=500)
+            st.markdown(f"[🔗 Open in New Tab]({url})")
 
 # --- PROJECTS PAGE ---
 elif selection == "Projects":
