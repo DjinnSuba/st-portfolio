@@ -49,9 +49,36 @@ if selection == "Home":
         I'm a **Data Analyst x AI Developer** with a passion for creating impactful real-world solutions.
     """)
 
+    
+
     # --- Certifications Section ---
     st.header("📜 Certifications & Badges")
 
+    # Example 1: Display badges in a row
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        try:
+            badge1 = Image.open("DS Associate - badge with outline.png")
+            st.image(badge1, caption="Data Science Associate Certification", use_container_width=True)
+        except FileNotFoundError:
+            st.warning("Missing: DS Associate - badge with outline.png")
+
+    with col2:
+        try:
+            badge2 = Image.open("cert_streamlit.png")
+            st.image(badge2, caption="Streamlit Creator Badge", use_container_width=True)
+        except FileNotFoundError:
+            st.warning("Missing: cert_streamlit.png")
+
+    with col3:
+        try:
+            badge3 = Image.open("cert_aws.png")
+            st.image(badge3, caption="AWS Cloud Practitioner", use_container_width=True)
+        except FileNotFoundError:
+            st.warning("Missing: cert_aws.png")
+
+    
     certificates = {
         "AI Agent Fundamentals": "https://github.com/DjinnSuba/st-portfolio/raw/main/AI_Agent_Fundamentals-certificate.pdf",
         "Building AI Agents with Google ADK": "https://github.com/DjinnSuba/st-portfolio/raw/main/Building_AI_Agents_with_Google_ADK-certificate.pdf",
@@ -61,14 +88,14 @@ if selection == "Home":
         "Introduction to PowerBI": "https://github.com/DjinnSuba/st-portfolio/raw/main/Introduction_PowerBI-certificate.pdf",
     }
     
-    # Put certificates into rows of 3 columns
     cols = st.columns(3)
     for idx, (name, url) in enumerate(certificates.items()):
         with cols[idx % 3]:
-            st.subheader(f"📖 {name}")
-            with st.expander("📂 View Full Certificate"):
-                display_pdf_from_url(url, height=500)
-            st.markdown(f"[🔗 Open in New Tab]({url})")
+            with st.container(border=True):
+                st.markdown(f"**📖 {name}**")
+                with st.expander("📂 View Full Certificate", expanded=False):
+                    display_pdf_from_url(url, height=350)
+                st.markdown(f"[🔗 Open in New Tab]({url})")
 
 # --- PROJECTS PAGE ---
 elif selection == "Projects":
