@@ -2,7 +2,6 @@ import streamlit as st
 import requests
 from PIL import Image
 import base64
-import fitz  # PyMuPDF
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="My Portfolio", layout="wide")
@@ -64,24 +63,13 @@ if selection == "Home":
 
     for name, url in certificates.items():
         st.subheader(f"📖 {name}")
-        try:
-            # Thumbnail (Page 1 preview)
-            response = requests.get(url)
-            pdf_bytes = response.content
-            doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-            page = doc[0]
-            pix = page.get_pixmap(matrix=fitz.Matrix(1.5, 1.5))  # 1.5x zoom
-            st.image(pix.tobytes("png"), caption=f"{name} (Preview)", use_container_width=True)
 
-            # Inline PDF viewer
-            with st.expander("📂 View Full Certificate"):
-                display_pdf_from_url(url, height=700)
+        # Inline PDF viewer (no auto-download)
+        with st.expander("📂 View Full Certificate"):
+            display_pdf_from_url(url, height=700)
 
-            # Direct link
-            st.markdown(f"[🔗 Open {name} in New Tab]({url})")
-
-        except Exception as e:
-            st.error(f"Could not load {name}: {e}")
+        # Direct link
+        st.markdown(f"[🔗 Open {name} in New Tab]({url})")
 
         st.markdown("---")
 
