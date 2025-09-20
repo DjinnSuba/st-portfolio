@@ -121,7 +121,7 @@ if selection == "Home":
 
     # Badges row
     st.subheader("🏅 Badges")
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4, col5, col6, col7 = st.columns(3)
 
     with col1:
         try:
@@ -129,20 +129,6 @@ if selection == "Home":
             st.image(badge1, caption="Data Science Associate", use_container_width=True)
         except FileNotFoundError:
             st.warning("Missing: DS Associate badge")
-
-    with col2:
-        try:
-            badge2 = Image.open("cert_streamlit.png")
-            st.image(badge2, caption="Streamlit Creator", use_container_width=True)
-        except FileNotFoundError:
-            st.warning("Missing: Streamlit badge")
-
-    with col3:
-        try:
-            badge3 = Image.open("cert_aws.png")
-            st.image(badge3, caption="AWS Cloud Practitioner", use_container_width=True)
-        except FileNotFoundError:
-            st.warning("Missing: AWS badge")
 
     # Certificates grid
     st.subheader("📖 Certificates")
