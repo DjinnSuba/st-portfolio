@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from PIL import Image
 import base64
+import fitz  # PyMuPDF <-- missing import
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="My Portfolio", layout="wide")
@@ -14,36 +15,9 @@ def display_pdf(file):
     pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600"></iframe>'
     st.markdown(pdf_display, unsafe_allow_html=True)
 
-# --- Cache PDF fetch from URLs ---
-@st.cache_data
-def fetch_pdf(url):
-    try:
-        return requests.get(url).content
-    except Exception:
-        return None
-
 # --- SIDEBAR NAVIGATION ---
 st.sidebar.title("Navigation")
 selection = st.sidebar.radio("Go to", ["Home", "Projects", "Contact"])
-
-# --- GLOBAL STYLING ---
-st.markdown("""
-    <style>
-    body {
-        background-color: #f9f9f9;
-        font-family: "Segoe UI", sans-serif;
-    }
-    .stButton button {
-        border-radius: 8px;
-        padding: 0.6rem 1.2rem;
-        font-size: 1rem;
-    }
-    iframe {
-        border: 1px solid #ddd;
-        border-radius: 10px;
-    }
-    </style>
-""", unsafe_allow_html=True)
 
 # --- HOME PAGE ---
 if selection == "Home":
@@ -73,80 +47,43 @@ if selection == "Home":
     st.header("About Me")
     st.markdown("""
         I'm a **Data Analyst x AI Developer** with a passion for creating impactful real-world solutions.
-        
-        - 🌱 I’m currently working on...
-        - 💼 I’ve worked with: **MSCI Inc, UPM IMS-DIG, Remotasks**
-        - 📫 Reach me at: [othedjinn@gmail.com](mailto:othedjinn@gmail.com) | 
-          [LinkedIn](https://www.linkedin.com/in/caezar-suba-634453161/)
     """)
 
     # --- Certifications Section ---
     st.header("📜 Certifications & Badges")
 
-    # Badge row
-    col1, col2, col3 = st.columns(3)
-    for col, (file, caption) in zip(
-        [col1, col2, col3],
-        [
-            ("DS Associate - badge with outline.png", "Data Science Associate Certification"),
-            ("cert_streamlit.png", "Streamlit Creator Badge"),
-            ("cert_aws.png", "AWS Cloud Practitioner"),
-        ],
-    ):
-        with col:
-            try:
-                img = Image.open(file)
-                st.image(img, caption=caption, use_container_width=True)
-            except FileNotFoundError:
-                st.warning(f"Missing: {file}")
-
-    # Example list with links
-    st.markdown("""
-    - 🏆 [Google Data Analytics Certificate](https://www.credly.com/)
-    - ☁️ [AWS Cloud Practitioner](https://www.credly.com/)
-    - 📊 [Tableau Desktop Specialist](https://www.credly.com/)
-    """)
-
-    # Certificate PDFs from GitHub
     certificates = {
-    "AI Agent Fundamentals": "https://github.com/DjinnSuba/st-portfolio/raw/main/AI_Agent_Fundamentals-certificate.pdf",
-    "Building AI Agents with Google ADK": "https://github.com/DjinnSuba/st-portfolio/raw/main/Building_AI_Agents_with_Google_ADK-certificate.pdf",
-    "Associate Data Scientist": "https://github.com/DjinnSuba/st-portfolio/raw/main/DataScienceAssociate-certificate.pdf",
-    "Intermediate Python": "https://github.com/DjinnSuba/st-portfolio/raw/main/Intermediate_Python-certificate.pdf",
-    "Intermediate SQL": "https://github.com/DjinnSuba/st-portfolio/raw/main/Intermediate_SQL-certificate.pdf",
-    "Introduction to PowerBI": "https://github.com/DjinnSuba/st-portfolio/raw/main/Introduction_PowerBI-certificate.pdf",
-}
+        "AI Agent Fundamentals": "https://github.com/DjinnSuba/st-portfolio/raw/main/AI_Agent_Fundamentals-certificate.pdf",
+        "Building AI Agents with Google ADK": "https://github.com/DjinnSuba/st-portfolio/raw/main/Building_AI_Agents_with_Google_ADK-certificate.pdf",
+        "Associate Data Scientist": "https://github.com/DjinnSuba/st-portfolio/raw/main/DataScienceAssociate-certificate.pdf",
+        "Intermediate Python": "https://github.com/DjinnSuba/st-portfolio/raw/main/Intermediate_Python-certificate.pdf",
+        "Intermediate SQL": "https://github.com/DjinnSuba/st-portfolio/raw/main/Intermediate_SQL-certificate.pdf",
+        "Introduction to PowerBI": "https://github.com/DjinnSuba/st-portfolio/raw/main/Introduction_PowerBI-certificate.pdf",
+    }
 
-for name, url in certificates.items():
-    st.subheader(f"📖 {name}")
+    for name, url in certificates.items():
+        st.subheader(f"📖 {name}")
+        try:
+            response = requests.get(url)
+            pdf_bytes = response.content
 
-    # Fetch PDF from GitHub
-    try:
-        response = requests.get(url)
-        pdf_bytes = response.content
+            doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+            page = doc[0]
+            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))  # zoom 2x
+            st.image(pix.tobytes("png"), caption=f"{name} (Page 1 Preview)", use_container_width=True)
 
-        # Open with PyMuPDF
-        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+            with st.expander("View full certificate"):
+                for i in range(len(doc)):
+                    page = doc[i]
+                    pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+                    st.image(pix.tobytes("png"), caption=f"{name} - Page {i+1}")
 
-        # Only show first page preview (saves performance)
-        page = doc[0]
-        pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))  # zoom 2x for clarity
-        st.image(pix.tobytes("png"), caption=f"{name} (Page 1 Preview)", use_container_width=True)
+            st.markdown(f"[🔗 Open {name} in New Tab]({url})")
 
-        # Option: Expand to view more pages
-        with st.expander("View full certificate"):
-            for i in range(len(doc)):
-                page = doc[i]
-                pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
-                st.image(pix.tobytes("png"), caption=f"{name} - Page {i+1}")
+        except Exception as e:
+            st.error(f"Could not load {name}: {e}")
 
-        # External link (open in new tab)
-        st.markdown(f"[🔗 Open {name} in New Tab]({url})")
-
-    except Exception as e:
-        st.error(f"Could not load {name}: {e}")
-
-    st.markdown("---")
+        st.markdown("---")
 
 # --- PROJECTS PAGE ---
 elif selection == "Projects":
