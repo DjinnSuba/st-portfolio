@@ -55,7 +55,7 @@ if selection == "Home":
     st.header("📜 Certifications & Badges")
 
     # Example 1: Display badges in a row
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
 
     with col1:
         try:
