@@ -1,4 +1,5 @@
 import streamlit as st
+import requests
 from PIL import Image
 import base64
 
@@ -7,11 +8,19 @@ st.set_page_config(page_title="My Portfolio", layout="wide")
 
 # --- Helper function for PDFs ---
 def display_pdf(file):
-    """Display PDF in Streamlit with iframe"""
+    """Display PDF in Streamlit with iframe (local files only)."""
     with open(file, "rb") as f:
-        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+        base64_pdf = base64.b64encode(f.read()).decode("utf-8")
     pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600" type="application/pdf"></iframe>'
     st.markdown(pdf_display, unsafe_allow_html=True)
+
+# --- Cache PDF fetch from URLs ---
+@st.cache_data
+def fetch_pdf(url):
+    try:
+        return requests.get(url).content
+    except Exception:
+        return None
 
 # --- SIDEBAR NAVIGATION ---
 st.sidebar.title("Navigation")
@@ -43,7 +52,7 @@ if selection == "Home":
 
     # About Me Section
     st.header("About Me")
-    st.write("""
+    st.markdown("""
         I'm a **Data Analyst x AI Developer** with a passion for creating impactful real-world solutions.
         
         - 🌱 I’m currently working on...
@@ -86,40 +95,65 @@ if selection == "Home":
     - 📊 [Tableau Desktop Specialist](https://www.credly.com/)
     """)
 
-    # Example 3: PDF Certificates (inline view + download)
-    st.subheader("📂 Certificate PDFs")
+    # Map: certificate name -> GitHub raw link
+    certificates = {
+        "AI Agent Fundamentals": "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/AI_Agent_Fundamentals-certificate.pdf",
+        "Building AI Agents with Google ADK": "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Building_AI_Agents_with_Google_ADK-certificate.pdf",
+        "Associate Data Scientist": "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/DataScienceAssociate-certificate.pdf",
+        "Intermediate Python": "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Intermediate_Python-certificate.pdf",
+        "Intermediate SQL": "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Intermediate_SQL-certificate.pdf",
+        "Introduction to PowerBI": "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Introduction_PowerBI-certificate.pdf",
+    }
+    
+    for name, url in certificates.items():
+        st.subheader(f"📖 {name}")
+        
+        # Open in browser
+        st.markdown(f"[🔗 View Certificate]({url})")
 
-    try:
-        st.markdown("**Associate Data Scienctist (PDF Preview)**")
-        display_pdf("DataScienceAssociate-certificate.pdf")
-    except FileNotFoundError:
-        st.warning("Missing: DataScienceAssociate-certificate.pdf")
-
-    try:
-        with open("Intermediate_Python-certificate.pdf", "rb") as pdf_file:
+        # Inline embed (browser permitting)
+        st.markdown(f"""
+        <iframe src="{url}" width="100%" height="500"></iframe>
+        """, unsafe_allow_html=True)
+        
+        # Download button
+        pdf_data = fetch_pdf(url)
+        if pdf_data:
             st.download_button(
-                label="☁️ Intermediate Python",
-                data=pdf_file,
-                file_name="Intermediate_Python-certificate.pdf",
+                label=f"📄 Download {name}",
+                data=pdf_data,
+                file_name=f"{name.replace(' ', '_')}.pdf",
                 mime="application/pdf"
             )
-    except FileNotFoundError:
-        st.warning("Missing: Intermediate_Python-certificate.pdf")
+        else:
+            st.warning(f"Could not load {name}.")
+        
+        st.markdown("---")
 
 # --- PROJECTS PAGE ---
 elif selection == "Projects":
     st.title("💼 Projects")
     st.write("Here are some of my featured projects:")
 
-    st.subheader("Electronic Blockchain-Based Bidding App")
-    st.write("""
-    - **Description**: What this project is about.
-    - **Tech Stack**: Python, Streamlit, etc.
+    st.subheader("📌 Electronic Blockchain-Based Bidding App")
+    st.markdown("""
+    - **Description**: A decentralized application for secure and transparent university bidding processes.
+    - **Tech Stack**: Python, Streamlit, Hyperledger Fabric, IPFS.
+    - **Repo**: [View on GitHub](https://github.com/DjinnSuba/blockchain-bidding-app)
     """)
 
-    st.subheader("📌 Project 2: [Another Project]")
-    st.write("""
-    - **Description**: Features and links.
+    st.subheader("📌 Hospital Readmission Dashboard")
+    st.markdown("""
+    - **Description**: Django + PostgreSQL dashboard with role-based access (admin, clinician, analyst).
+    - **Tech Stack**: Django, PostgreSQL, Streamlit (for analytics).
+    - **Repo**: [View on GitHub](https://github.com/DjinnSuba/hospital-dashboard)
+    """)
+
+    st.subheader("📌 Secure NLP Project")
+    st.markdown("""
+    - **Description**: A research project on privacy-preserving natural language processing using federated learning.
+    - **Tech Stack**: Python, PyTorch, Transformers.
+    - **Repo**: [View on GitHub](https://github.com/DjinnSuba/secure-nlp)
     """)
 
 # --- CONTACT PAGE ---
@@ -157,6 +191,10 @@ elif selection == "Contact":
             color: white;
             border: none;
             font-size: 1rem;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
         }
         </style>
     """, unsafe_allow_html=True)
