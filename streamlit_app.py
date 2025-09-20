@@ -155,4 +155,60 @@ elif selection == "Projects":
             "title": "📌 Secure NLP Project",
             "desc": "A research project on privacy-preserving natural language processing using federated learning.",
             "stack": "Python, PyTorch, Transformers",
-            "repo": "https://github.com/DjinnSuba/se
+            "repo": "https://github.com/DjinnSuba/secure-nlp",
+        },
+    ]
+
+    for project in projects:
+        st.subheader(project["title"])
+        st.markdown(f"""
+        - **Description**: {project["desc"]}
+        - **Tech Stack**: {project["stack"]}
+        - **Repo**: [View on GitHub]({project["repo"]})
+        """)
+        st.markdown("---")
+
+# --- CONTACT PAGE ---
+elif selection == "Contact":
+    st.title("📫 Contact Me")
+    st.write("I'd love to connect! Please drop me a message:")
+
+    contact_form = """
+    <form action="https://formsubmit.co/othedjinn@gmail.com" method="POST">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="text" name="name" placeholder="Your name" required>
+        <input type="email" name="email" placeholder="Your email" required>
+        <textarea name="message" placeholder="Your message here..." required></textarea>
+        <button type="submit">Send</button>
+    </form>
+    """
+
+    st.markdown(contact_form, unsafe_allow_html=True)
+
+    st.markdown("""
+        <style>
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        input, textarea {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        </style>
+    """, unsafe_allow_html=True)
