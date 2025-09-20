@@ -109,35 +109,44 @@ if selection == "Home":
 
     # Certificate PDFs from GitHub
     certificates = {
-        "AI Agent Fundamentals": "https://github.com/DjinnSuba/st-portfolio/raw/main/AI_Agent_Fundamentals-certificate.pdf",
-        "Building AI Agents with Google ADK": "https://github.com/DjinnSuba/st-portfolio/raw/main/Building_AI_Agents_with_Google_ADK-certificate.pdf",
-        "Associate Data Scientist": "https://github.com/DjinnSuba/st-portfolio/raw/main/DataScienceAssociate-certificate.pdf",
-        "Intermediate Python": "https://github.com/DjinnSuba/st-portfolio/raw/main/Intermediate_Python-certificate.pdf",
-        "Intermediate SQL": "https://github.com/DjinnSuba/st-portfolio/raw/main/Intermediate_SQL-certificate.pdf",
-        "Introduction to PowerBI": "https://github.com/DjinnSuba/st-portfolio/raw/main/Introduction_PowerBI-certificate.pdf",
-    }
-    
-    for name, url in certificates.items():
-        st.subheader(f"📖 {name}")
-    
-        # Inline preview
-        st.components.v1.iframe(url, height=500, scrolling=True)
-    
-        # Just provide link (no auto-download)
-        st.markdown(f"[🔗 View {name} in New Tab]({url})")
-    
-        # Optional: download button, but fetch only when clicked
-        if st.button(f"📥 Download {name}"):
-            import requests
-            pdf_data = requests.get(url).content
-            st.download_button(
-                label=f"Confirm Download {name}",
-                data=pdf_data,
-                file_name=f"{name.replace(' ', '_')}.pdf",
-                mime="application/pdf"
-            )
-    
-        st.markdown("---")
+    "AI Agent Fundamentals": "https://github.com/DjinnSuba/st-portfolio/raw/main/AI_Agent_Fundamentals-certificate.pdf",
+    "Building AI Agents with Google ADK": "https://github.com/DjinnSuba/st-portfolio/raw/main/Building_AI_Agents_with_Google_ADK-certificate.pdf",
+    "Associate Data Scientist": "https://github.com/DjinnSuba/st-portfolio/raw/main/DataScienceAssociate-certificate.pdf",
+    "Intermediate Python": "https://github.com/DjinnSuba/st-portfolio/raw/main/Intermediate_Python-certificate.pdf",
+    "Intermediate SQL": "https://github.com/DjinnSuba/st-portfolio/raw/main/Intermediate_SQL-certificate.pdf",
+    "Introduction to PowerBI": "https://github.com/DjinnSuba/st-portfolio/raw/main/Introduction_PowerBI-certificate.pdf",
+}
+
+for name, url in certificates.items():
+    st.subheader(f"📖 {name}")
+
+    # Fetch PDF from GitHub
+    try:
+        response = requests.get(url)
+        pdf_bytes = response.content
+
+        # Open with PyMuPDF
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+
+        # Only show first page preview (saves performance)
+        page = doc[0]
+        pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))  # zoom 2x for clarity
+        st.image(pix.tobytes("png"), caption=f"{name} (Page 1 Preview)", use_container_width=True)
+
+        # Option: Expand to view more pages
+        with st.expander("View full certificate"):
+            for i in range(len(doc)):
+                page = doc[i]
+                pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+                st.image(pix.tobytes("png"), caption=f"{name} - Page {i+1}")
+
+        # External link (open in new tab)
+        st.markdown(f"[🔗 Open {name} in New Tab]({url})")
+
+    except Exception as e:
+        st.error(f"Could not load {name}: {e}")
+
+    st.markdown("---")
 
 # --- PROJECTS PAGE ---
 elif selection == "Projects":
