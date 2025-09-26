@@ -216,7 +216,8 @@ elif selection == "Projects":
                 horizontal=True,
                 key=project["title"]
             )
-            st.image(project["images"][img_choice], use_column_width=True)
+            st.image(project["images"][img_choice], use_container_width=True)
+
 
         st.markdown("---")
 
