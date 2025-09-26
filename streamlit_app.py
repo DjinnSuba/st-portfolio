@@ -183,13 +183,13 @@ elif selection == "Projects":
         },
         {
             "title": "📌 Enrollment System",
-            "desc": "Django + PostgreSQL dashboard with role-based access (admin, clinician, analyst).",
-            "stack": "Django, PostgreSQL, Streamlit (for analytics)",
+            "desc": "Basic Enrollment system for classes and management for professors",
+            "stack": "Laravel, JavaScript, PHP, SQL",
             "repo": "https://github.com/DjinnSuba/hospital-readmission-dashboard",
             "images": [
-                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Enrollment.png",
-                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Enrollment-1.png",
-                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Enrollment-2.png"
+                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Enrollment.jpg",
+                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Enrollment-1.jpg",
+                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Enrollment-2.jpg"
             ],
         },
         {
@@ -198,10 +198,10 @@ elif selection == "Projects":
             "stack": "Java and JavaFx",
             "repo": "https://drive.google.com/drive/u/2/folders/17nSnjqBKbZT4ABoAaDbZtU7nYoHnO-Bn?fbclid=IwY2xjawNDhV9leHRuA2FlbQIxMABicmlkETFJZjduMVhGNnpQTHM2eEhJAR5fpUlE_4Yvjr_IDqIbRlDjlkBrRyYTtTf6VHYlflOTJzNoo7tPgihvm6SUqw_aem_D5va5UF69zkpeRRJc7tyZw",
             "images": [
-                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Jurojin.png",
-                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Jurojin-1.png",
-                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Jurojin-2.png",
-                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Jurojin-3.png"
+                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Jurojin.jpg",
+                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Jurojin-1.jpg",
+                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Jurojin-2.jpg",
+                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/Jurojin-3.jpg"
             ],
         },
         {
