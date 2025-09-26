@@ -168,6 +168,18 @@ if selection == "Home":
 elif selection == "Projects":
     st.title("💼 Projects")
 
+    # CSS for project images (uniform height)
+    st.markdown("""
+        <style>
+        .project-image img {
+            height: 300px !important;   /* adjust this height */
+            object-fit: contain;        /* use 'cover' if you prefer cropped fit */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
     projects = [
         {
             "title": "📌 Automated Laboratory Inventory System",
@@ -241,8 +253,12 @@ elif selection == "Projects":
                 horizontal=True,
                 key=project["title"]
             )
-            st.image(project["images"][img_choice], use_container_width=True)
 
+            # Use custom CSS wrapper instead of st.image
+            st.markdown(
+                f'<div class="project-image"><img src="{project["images"][img_choice]}" /></div>',
+                unsafe_allow_html=True
+            )
 
         st.markdown("---")
 
