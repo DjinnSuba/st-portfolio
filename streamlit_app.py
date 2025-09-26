@@ -170,36 +170,57 @@ elif selection == "Projects":
 
     projects = [
         {
-            "title": "📌 Electronic Blockchain-Based Bidding App",
-            "desc": "A decentralized application for secure and transparent university bidding processes.",
+            "title": "📌 Automated Laboratory Inventory System",
+            "desc": "A blockchain-based system for secure and transparent laboratory inventory management.",
             "stack": "Python, Streamlit, Hyperledger Fabric, IPFS",
-            "repo": "https://github.com/DjinnSuba/blockchain-bidding-app",
+            "repo": "https://github.com/DjinnSuba/automated-laboratory-inventory",
+            "images": [
+                "https://raw.githubusercontent.com/DjinnSuba/automated-laboratory-inventory/main/alims.png",
+                "https://raw.githubusercontent.com/DjinnSuba/automated-laboratory-inventory/main/alims1.png"
+            ],
         },
         {
             "title": "📌 Hospital Readmission Dashboard",
             "desc": "Django + PostgreSQL dashboard with role-based access (admin, clinician, analyst).",
             "stack": "Django, PostgreSQL, Streamlit (for analytics)",
-            "repo": "https://github.com/DjinnSuba/hospital-dashboard",
+            "repo": "https://github.com/DjinnSuba/hospital-readmission-dashboard",
+            "images": [
+                "https://raw.githubusercontent.com/DjinnSuba/hospital-readmission-dashboard/main/screenshots/dashboard1.png",
+                "https://raw.githubusercontent.com/DjinnSuba/hospital-readmission-dashboard/main/screenshots/dashboard2.png"
+            ],
         },
         {
-            "title": "📌 Secure NLP Project",
-            "desc": "A research project on privacy-preserving natural language processing using federated learning.",
-            "stack": "Python, PyTorch, Transformers",
-            "repo": "https://github.com/DjinnSuba/secure-nlp",
+            "title": "📌 Electronic Health Record",
+            "desc": "An EHR web application for managing patient medical records securely.",
+            "stack": "Django, PostgreSQL, Bootstrap",
+            "repo": "https://github.com/DjinnSuba/Electronic-Health-Records",
+            "images": [
+                "https://raw.githubusercontent.com/DjinnSuba/Electronic-Health-Records/main/screenshots/ehr1.png",
+                "https://raw.githubusercontent.com/DjinnSuba/Electronic-Health-Records/main/screenshots/ehr2.png"
+            ],
         },
     ]
 
-    cols = st.columns(3)
-    for idx, project in enumerate(projects):
-        with cols[idx % 3]:
-            st.markdown(f"""
-                <div class="card">
-                    <h4>{project["title"]}</h4>
-                    <p><b>Description:</b> {project["desc"]}</p>
-                    <p><b>Tech Stack:</b> {project["stack"]}</p>
-                    <a href="{project["repo"]}" target="_blank">🔗 View on GitHub</a>
-                </div>
-            """, unsafe_allow_html=True)
+    for project in projects:
+        st.markdown(f"### {project['title']}")
+        st.write(project["desc"])
+        st.write(f"**Tech Stack:** {project['stack']}")
+        st.markdown(f"[🔗 View on GitHub]({project['repo']})")
+
+        # Image "carousel" via radio buttons
+        if project["images"]:
+            img_choice = st.radio(
+                f"Select screenshot for {project['title']}",
+                options=list(range(len(project["images"]))),
+                format_func=lambda i: f"Screenshot {i+1}",
+                horizontal=True,
+                key=project["title"]
+            )
+            st.image(project["images"][img_choice], use_column_width=True)
+
+        st.markdown("---")
+
+
 
 # --- CONTACT PAGE ---
 elif selection == "Contact":
