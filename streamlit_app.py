@@ -175,8 +175,10 @@ elif selection == "Projects":
             "stack": "Python, Streamlit, Hyperledger Fabric, IPFS",
             "repo": "https://github.com/DjinnSuba/automated-laboratory-inventory",
             "images": [
-                "https://raw.githubusercontent.com/DjinnSuba/automated-laboratory-inventory/main/alims.png",
-                "https://raw.githubusercontent.com/DjinnSuba/automated-laboratory-inventory/main/alims1.png"
+                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/alims.png",
+                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/alims1.png",
+                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/alims2.png",
+                "https://raw.githubusercontent.com/DjinnSuba/st-portfolio/main/alims3.png"
             ],
         },
         {
